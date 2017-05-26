@@ -1,0 +1,57 @@
+taxonomy:
+    - AdverseOutcome:
+      - Disease:
+        - Cancer
+
+vars:
+    aoTerms: lemma=/^(morbidity|mortality|toxicity)$/
+    diseaseTerms: lemma=/^(disease|disorder|infection|inflammation|syndrome)$/
+    cancerTerms: lemma=/^(cancer|leukemia|malignancy|metastasis|tumou?r)$/
+
+rules:
+    - name: "adverse-outcome-1"
+      label: AdverseOutcome
+      priority: 1
+      type: token
+      pattern: |
+        # high morbidity
+        (?<! [lemma=low]) [${ aoTerms }] |
+        # poor prognosis, adverse outcome, etc.
+        [lemma=/^(poor)$/] [lemma=/^(outcome|outlook|prognosis)$/] |
+        # high risk of X
+        [tag=JJ & !lemma=low]? [lemma=/^(risk)$/] (of [tag=/^(JJ|NN)/]+)?
+
+    - name: "cancer-1"
+      label: Cancer
+      priority: 1
+      type: token
+      pattern: |
+        # malignant, ovarian, breast, etc.
+        [tag=/^(JJ|NN)/]*
+        (
+         # ex. cancer, tumor, etc.
+         [ ${ cancerTerms } ] |
+         # blastoma, melanoma, etc.
+         [!tag=/^NNP/ & tag=/^NN/ & lemma=/oma$/]
+        )
+        # should not be followed by suppressor, etc.
+        (?! [lemma=suppressor])
+
+    - name: "disease-1"
+      label: Disease
+      priority: 2+
+      type: token
+      pattern: |
+        # leukopenia
+        [tag=/^(JJ|NN)/]*
+        (
+         # leukopenia
+         # give cancer rule precedence over this less general one
+         [tag=/^NN/ & lemma=/(pe)?[nm]ia$/ & !mention=Cancer] |
+         # arthritis, periodontitis, etc.
+         [tag=/^NN/ & lemma=/itis$/] |
+         # ex. Familial platelet disorder
+         [${ diseaseTerms }]
+        )
+        # should not be followed by suppressor, etc.
+        (?! [lemma=suppressor])
