@@ -1,0 +1,6 @@
+    - name: "machine-generated-{name}"
+      label: {label}
+      priority: 1
+      type: token
+      pattern: |
+         {pattern}
