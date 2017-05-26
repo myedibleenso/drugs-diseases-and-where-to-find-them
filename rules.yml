@@ -2,11 +2,13 @@ taxonomy:
     - AdverseOutcome:
       - Disease:
         - Cancer
+    - Drug
 
 vars:
     aoTerms: lemma=/^(morbidity|mortality|toxicity)$/
     diseaseTerms: lemma=/^(disease|disorder|infection|inflammation|syndrome)$/
     cancerTerms: lemma=/^(cancer|leukemia|malignancy|metastasis|tumou?r)$/
+    drugSuffixes: lemma=/(ib|mab|zole)$/
 
 rules:
     - name: "adverse-outcome-1"
@@ -55,3 +57,13 @@ rules:
         )
         # should not be followed by suppressor, etc.
         (?! [lemma=suppressor])
+
+    - name: "drug-1"
+      label: Drug
+      priority: 1
+      type: token
+      pattern: |
+        (
+         # ex. imatinib, erlotinib, pertuzimab, etc.
+         [tag=/^NN/ & ${ drugSuffixes }]
+        )
