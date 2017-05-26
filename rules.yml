@@ -8,7 +8,7 @@ vars:
     aoTerms: lemma=/^(morbidity|mortality|toxicity)$/
     diseaseTerms: lemma=/^(disease|disorder|infection|inflammation|syndrome)$/
     cancerTerms: lemma=/^(cancer|leukemia|malignancy|metastasis|tumou?r)$/
-    drugSuffixes: lemma=/(ib|mab|zole)$/
+    drugSuffixes: lemma=/(ib|pab|mab|zole)$/
 
 rules:
     - name: "adverse-outcome-1"
